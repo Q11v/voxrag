@@ -5,3 +5,13 @@ description = "Audio RAG pipeline — transcribe, embed, retrieve, and answer wi
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
+
+[project.scripts]
+voxrag = "app.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

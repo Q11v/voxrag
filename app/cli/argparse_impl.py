@@ -1,17 +1,32 @@
-import sys
 import argparse
+import os
+import sys
+
+from .shared import setup_logging
+
 
 def cmd_ingest(args: argparse.Namespace) -> None:
     pass
 
+
 def cmd_ask(args: argparse.Namespace) -> None:
     pass
+
 
 def cmd_info(_: argparse.Namespace) -> None:
     pass
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="voxrag 工具")
+
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",  # action="store_true" 表示这是一个开关型参数（flag），不需要跟值
+        default=os.getenv("VOXRAG_VERBOSE") == "1",
+        help="输出调试日志",
+    )
 
     # add_subparsers 创建子命令系统
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -29,7 +44,9 @@ def main() -> None:
     p_info.set_defaults(func=cmd_info)
 
     args = parser.parse_args()
+    setup_logging(args.verbose)
     args.func(args)
+
 
 if __name__ == "__main__":
     try:

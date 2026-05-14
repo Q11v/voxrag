@@ -1,7 +1,7 @@
 [project]
 name = "voxrag"
 version = "0.1.0"
-description = "Add your description here"
+description = "Audio RAG pipeline — transcribe, embed, retrieve, and answer with streaming LLM"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []

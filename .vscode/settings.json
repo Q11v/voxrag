@@ -17,5 +17,12 @@
   "ruff.organizeImports": true,
   "ruff.fixAll": true,
 
-  "cSpell.words": ["chunker", "embedder", "getpid", "rerank", "voxrag"]
+  "cSpell.words": [
+    "chunker",
+    "embedder",
+    "getpid",
+    "rerank",
+    "voxrag"
+  ],
+  "python.REPL.enableREPLSmartSend": false
 }

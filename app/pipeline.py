@@ -4,11 +4,8 @@ import time
 from collections.abc import Generator, Iterator
 from contextlib import contextmanager
 
-from .chunker import chunk_segments
-from .embedder import embed
 from .generator import answer_stream
 from .retriever import Hit, retrieve
-from .store import init_collection, store
 from .transcribe import transcribe
 
 _logger = logging.getLogger(__name__)
@@ -19,9 +16,13 @@ _logger = logging.getLogger(__name__)
 def _timed(label: str) -> Generator[None, None, None]:
     t = time.perf_counter()
     yield
-    # %s: 字符串，%-14s 表示左对齐，占 14 个字符宽度
-    # %.1f: 浮点数，保留 1 位小数
-    _logger.info("%-14s %.1fs", label, time.perf_counter() - t)
+    dt = time.perf_counter() - t
+    # %-14s 左对齐占 14 字符
+    _logger.info(
+        "%-14s %5.1fs",
+        label,
+        dt,
+    )
 
 
 def ingest(audio_path: str, source: str | None = None) -> int:
@@ -32,22 +33,27 @@ def ingest(audio_path: str, source: str | None = None) -> int:
     with _timed("transcribe"):
         segments = transcribe(audio_path)
 
-    with _timed("chunk"):
-        chunks = chunk_segments(segments)
+    print([s["text"] for s in segments])
 
-    if not chunks:
-        _logger.warning("no chunks generated for %s", source)
-        return 0
-    print(f"ingest  source={source}  segments={len(segments)}  chunks={len(chunks)}")
+    # with _timed("chunk"):
+    #     chunks = chunk_segments(segments)
 
-    with _timed("embed"):
-        vectors = embed([c.text for c in chunks])
+    # if not chunks:
+    #     _logger.warning("no chunks generated for %s", source)
+    #     return 0
+    # print(f"ingest  source={source}  segments={len(segments)}  chunks={len(chunks)}")
+    print(f"ingest  source={source}  segments={len(segments)}")
 
-    with _timed("store"):
-        init_collection()
-        store(chunks, vectors, source=source, replace=True)
+    # with _timed("embed"):
+    #     vectors = embed([c.text for c in chunks])
 
-    return len(chunks)
+    # with _timed("store"):
+    #     init_collection()
+    #     store(chunks, vectors, source=source, replace=True)
+
+    # return len(chunks)
+
+    return 1
 
 
 def ask(question: str, source: str | None = None) -> tuple[list[Hit], Iterator[str]]:

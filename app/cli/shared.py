@@ -1,20 +1,23 @@
 import logging
+import os
 import sys
+from pathlib import Path
 
 from ..pipeline import ask as pipeline_ask
 from ..pipeline import ingest as pipeline_ingest
 from ..store import collection_info, init_collection
 
 
-def setup_logging(
-    verbose: bool,
-    log_file: str | None,
-) -> None:
+def env_flag(name: str) -> bool:
+    return os.getenv(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def setup_logging(verbose: bool, log_file: str | None) -> None:
     handlers: list[logging.Handler] = [logging.StreamHandler()]
 
-    # 配置日志文件路径，默认为 main.log
-    # handlers.append(logging.FileHandler(os.getenv("VOXRAG_LOG_FILE", "./log/main.log")))
     if log_file:
+        # log/ 被 gitignore，新克隆的仓库里不存在，而 FileHandler 不会自动建目录
+        Path(log_file).parent.mkdir(parents=True, exist_ok=True)
         handlers.append(logging.FileHandler(log_file))
 
     logging.basicConfig(

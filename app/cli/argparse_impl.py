@@ -1,8 +1,7 @@
 import argparse
 import os
-import sys
 
-from .shared import print_info, run_ask, run_ingest, setup_logging
+from .shared import env_flag, print_info, run_ask, run_ingest, setup_logging
 
 
 def cmd_ingest(args: argparse.Namespace) -> None:
@@ -18,20 +17,23 @@ def cmd_info(_: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="voxrag 工具")
+    parser = argparse.ArgumentParser(prog="voxrag", description="voxrag 工具")
 
     # -- 开头 → 可选参数（named argument），有名字，顺序任意，可以省略
     # 没有 -- → 位置参数（positional argument），按顺序匹配，通常必填
 
+    # 顶层 parser 上的参数是全局 flag，必须写在子命令之前：voxrag --verbose ask "..."
     parser.add_argument(
         "--verbose",
         "-v",
         action="store_true",  # action="store_true" 表示这是一个开关型参数（flag），不需要跟值
-        default=os.getenv("VOXRAG_VERBOSE") == "1",
-        help="输出调试日志",
+        default=env_flag("VOXRAG_VERBOSE"),
+        help="输出调试日志（也可用 VOXRAG_VERBOSE=1）",
     )
     parser.add_argument(
-        "--log-file", default=os.getenv("VOXRAG_LOG_FILE"), help="日志写入文件路径"
+        "--log-file",
+        default=os.getenv("VOXRAG_LOG_FILE") or None,
+        help="日志写入文件路径（也可用 VOXRAG_LOG_FILE）",
     )
 
     # add_subparsers 创建子命令系统
@@ -60,8 +62,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n已中断", file=sys.stderr)
-        sys.exit(130)
+    main()

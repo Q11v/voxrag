@@ -15,12 +15,6 @@ class Segment(TypedDict):
 
 
 def transcribe(audio_path: str) -> list[Segment]:
-    # 这里是一个假实现，实际应该调用 Whisper 模型来转录音频
-    # return [
-    #     {"id": 1, "start": 0.0, "end": 5.0, "text": "Hello world."},
-    #     {"id": 2, "start": 5.0, "end": 10.0, "text": "This is a test."},
-    # ]
-
     result = mlx_whisper.transcribe(audio_path, path_or_hf_repo=settings.asr_model)
     segments = result["segments"]
     assert isinstance(segments, list), "segments should be a list"
